@@ -2076,20 +2076,17 @@
 
     function loadData() {
       showToast('테니스 일지 동기화 중...');
-      if (typeof google === 'undefined' || !google.script || !google.script.run) return;
-
-      google.script.run
-        .withSuccessHandler(function(res) {
-          allLogs = (res && res.logs) || [];
-          monthlyTrendsData = (res && res.monthly_trends) || [];
-          updateStats(res && res.overview);
-          renderLogs();
-          showToast('동기화 완료!');
-        })
-        .withFailureHandler(function(err) {
-          showToast('동기화 오류: ' + err.message);
-        })
-        .getTennisData();
+      callGasApi('getTennisData', undefined, function(res) {
+        if (!res) return;
+        allLogs = (res && res.logs) || [];
+        monthlyTrendsData = (res && res.monthly_trends) || [];
+        if (typeof updateStats === 'function') updateStats(res && res.overview);
+        renderLogs();
+        if (typeof renderAllCharts === 'function') renderAllCharts();
+        showToast('동기화 완료!');
+      }, function(err) {
+        showToast('동기화 오류: ' + (err.message || err));
+      });
     }
 
     function loadStringData() {
@@ -2736,33 +2733,33 @@
       const newT = prompt('댓글을 수정하세요:', cur);
       if (!newT || newT.trim() === cur) return;
       showToast('수정 중...');
-      google.script.run
-        .withSuccessHandler(function() {
-          showToast('수정되었습니다.');
-          loadData();
-        })
-        .updateTennisComment(rowIndex, commentId, newT.trim());
+      callGasApi('updateTennisComment', { rowIndex: rowIndex, commentId: commentId, newText: newT.trim() }, function() {
+        showToast('수정되었습니다.');
+        loadData();
+      }, function(err) {
+        alert('수정 실패: ' + (err.message || err));
+      });
     }
 
     function deleteComment(rowIndex, commentId) {
       if (!confirm('댓글을 삭제하시겠습니까?')) return;
-      google.script.run
-        .withSuccessHandler(function() {
-          showToast('삭제되었습니다.');
-          loadData();
-        })
-        .deleteTennisComment(rowIndex, commentId);
+      callGasApi('deleteTennisComment', { rowIndex: rowIndex, commentId: commentId }, function() {
+        showToast('삭제되었습니다.');
+        loadData();
+      }, function(err) {
+        alert('삭제 실패: ' + (err.message || err));
+      });
     }
 
     function deleteTennisLog(rowIndex) {
       if (!confirm('이 테니스 일지를 삭제하시겠습니까?')) return;
-      google.script.run
-        .withSuccessHandler(function() {
-          showToast('일지가 삭제되었습니다.');
-          loadData();
-          loadStringData();
-        })
-        .deleteTennisLog(rowIndex);
+      callGasApi('deleteTennisLog', rowIndex, function() {
+        showToast('일지가 삭제되었습니다.');
+        loadData();
+        loadStringData();
+      }, function(err) {
+        alert('삭제 실패: ' + (err.message || err));
+      });
     }
 
     function testTelegram() {
@@ -3064,30 +3061,22 @@
     }
 
     function executeGasBackendVideoAnalysis(apiKey, videoBase64, mimeType, motionType, focusNotes, modelPref) {
-      if (typeof google === 'undefined' || !google.script || !google.script.run) {
-        handleVideoAnalysisFailure("Google Apps Script 환경이 아니거나 API Key가 올바르지 않습니다.");
-        return;
-      }
-
-      google.script.run
-        .withSuccessHandler(function(res) {
-          if (res && res.success) {
-            handleVideoAnalysisSuccess(res.analysis, motionType);
-          } else {
-            handleVideoAnalysisFailure(res ? res.error : "알 수 없는 오류");
-          }
-        })
-        .withFailureHandler(function(err) {
-          handleVideoAnalysisFailure(err.message);
-        })
-        .analyzeTennisVideoFormAI({
-          geminiApiKey: apiKey,
-          videoBase64: videoBase64,
-          mimeType: mimeType,
-          motionType: motionType,
-          focusNotes: focusNotes,
-          modelPreference: modelPref
-        });
+      callGasApi('analyzeTennisVideoFormAI', {
+        geminiApiKey: apiKey,
+        videoBase64: videoBase64,
+        mimeType: mimeType,
+        motionType: motionType,
+        focusNotes: focusNotes,
+        modelPreference: modelPref
+      }, function(res) {
+        if (res && res.success) {
+          handleVideoAnalysisSuccess(res.analysis, motionType);
+        } else {
+          handleVideoAnalysisFailure(res ? res.error : "알 수 없는 오류");
+        }
+      }, function(err) {
+        handleVideoAnalysisFailure(err.message || err);
+      });
     }
 
     function handleVideoAnalysisSuccess(reportText, motionType) {
