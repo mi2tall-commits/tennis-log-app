@@ -1418,6 +1418,264 @@
       display: none !important;
     }
 
+  
+    /* ================================================================= */
+    /* 🎯 ULTRA READABILITY & DESIGN UNIFICATION (USER FEEDBACK FIXES)   */
+    /* ================================================================= */
+
+    /* 📊 1. 상단 통계 카드 글씨체 통일화 (Point 3 Fix) */
+    .stat-card {
+      background: #121B17 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 16px !important;
+      padding: 13px 14px !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+    }
+    .stat-label {
+      font-size: 11px !important;
+      color: #8C9B93 !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.2px !important;
+      margin-bottom: 2px !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif !important;
+    }
+    .stat-val {
+      font-size: 21px !important;
+      font-weight: 900 !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif !important;
+      letter-spacing: -0.5px !important;
+      font-feature-settings: "tnum" 1 !important;
+      color: #FFFFFF !important;
+    }
+    .stat-val.green {
+      color: #C1FF00 !important;
+      text-shadow: 0 0 16px rgba(193, 255, 0, 0.3) !important;
+    }
+    .stat-val.blue {
+      color: #38BDF8 !important;
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.3) !important;
+    }
+    .stat-val.amber {
+      color: #FBBF24 !important;
+      text-shadow: 0 0 16px rgba(251, 191, 36, 0.3) !important;
+    }
+
+    /* 📋 2. 일지 목록 디자인 통일화 & 수기 메모 가독성 극대화 (Point 1 Fix) */
+    .log-item {
+      background: #121B17 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 18px !important;
+      padding: 16px 18px !important;
+      margin-top: 14px !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+    .log-title {
+      font-size: 16px !important;
+      font-weight: 800 !important;
+      color: #FFFFFF !important;
+      margin-bottom: 8px !important;
+    }
+    .log-info-row {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 6px !important;
+      align-items: center !important;
+      font-size: 12px !important;
+      color: #CBD5E1 !important;
+      margin-bottom: 10px !important;
+    }
+    .info-skill {
+      background: rgba(193, 255, 0, 0.1) !important;
+      color: #C1FF00 !important;
+      border: 1px solid rgba(193, 255, 0, 0.25) !important;
+      border-radius: 6px !important;
+      padding: 2px 7px !important;
+      font-weight: 700 !important;
+    }
+    .btn-action {
+      background: #14201A !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 8px !important;
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      padding: 5px 9px !important;
+      cursor: pointer !important;
+      transition: all 0.15s ease !important;
+    }
+    .btn-action.edit {
+      color: #38BDF8 !important;
+      border-color: rgba(56, 189, 248, 0.3) !important;
+      background: rgba(56, 189, 248, 0.08) !important;
+    }
+    .btn-action.del {
+      color: #F87171 !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+      background: rgba(239, 68, 68, 0.08) !important;
+    }
+
+    /* 📝 수기 메모 박스 (어두운 배경 + 선명한 고대비 화이트 본문) */
+    .log-notes {
+      background: #0E1713 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-left: 3.5px solid #C1FF00 !important;
+      border-radius: 12px !important;
+      padding: 12px 14px !important;
+      margin-top: 10px !important;
+      color: #E2E8F0 !important;
+      font-size: 13px !important;
+      line-height: 1.6 !important;
+      white-space: pre-wrap !important;
+    }
+    .log-notes > div:first-child {
+      color: #C1FF00 !important;
+      font-weight: 800 !important;
+      font-size: 12px !important;
+      margin-bottom: 4px !important;
+    }
+
+    /* 💬 댓글 박스 통일화 */
+    .comments-wrapper {
+      margin-top: 12px !important;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+      padding-top: 10px !important;
+    }
+    .comments-header {
+      color: #8C9B93 !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      margin-bottom: 8px !important;
+    }
+    .comment-item {
+      background: #0E1713 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 12px !important;
+      padding: 10px 12px !important;
+      margin-bottom: 6px !important;
+    }
+    .comment-author {
+      color: #38BDF8 !important;
+      font-weight: 800 !important;
+      font-size: 12px !important;
+    }
+    .comment-time {
+      color: #64748B !important;
+      font-size: 11px !important;
+    }
+    .comment-text {
+      color: #E2E8F0 !important;
+      font-size: 13px !important;
+      margin-top: 4px !important;
+    }
+    .comment-input-author, .comment-input-text {
+      background: #0B120F !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #FFFFFF !important;
+      border-radius: 10px !important;
+      padding: 8px 12px !important;
+      font-size: 13px !important;
+    }
+    .comment-submit-btn {
+      background: #10B981 !important;
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      border: none !important;
+      border-radius: 10px !important;
+      padding: 8px 16px !important;
+      cursor: pointer !important;
+    }
+
+    /* ✏️ 수정 모달 가독성 확보 (수정 시 기입 내용 또렷한 화이트 & 고대비) */
+    .modal-content {
+      background: #121B17 !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #FFFFFF !important;
+      border-radius: 20px !important;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8) !important;
+    }
+    .modal-content input, .modal-content select, .modal-content textarea {
+      background: #0B120F !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      color: #FFFFFF !important;
+      border-radius: 12px !important;
+      padding: 11px 13px !important;
+      font-size: 13.5px !important;
+    }
+    .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
+      border-color: #C1FF00 !important;
+      box-shadow: 0 0 0 2px rgba(193, 255, 0, 0.2) !important;
+    }
+    .modal-content textarea {
+      line-height: 1.6 !important;
+      min-height: 90px !important;
+    }
+    .edit-skill {
+      background: #14201A !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: #A3B3AA !important;
+      border-radius: 10px !important;
+      padding: 8px 6px !important;
+      text-align: center !important;
+      cursor: pointer !important;
+      font-size: 12px !important;
+      transition: all 0.15s ease !important;
+    }
+    .edit-skill.active {
+      background: rgba(193, 255, 0, 0.15) !important;
+      border-color: #C1FF00 !important;
+      color: #C1FF00 !important;
+      font-weight: 800 !important;
+    }
+
+    /* 🎾 3. 스트링 교체 내역 글씨 가독성 극대화 (Point 2 Fix) */
+    .string-history-card {
+      background: #121B17 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 16px !important;
+      padding: 15px 16px !important;
+      margin-top: 10px !important;
+    }
+    .string-h-racket {
+      font-size: 15px !important;
+      font-weight: 800 !important;
+      color: #FFFFFF !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+    .string-h-date {
+      font-size: 11.5px !important;
+      color: #8C9B93 !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif !important;
+      font-weight: 600 !important;
+    }
+    .string-h-details {
+      display: flex !important;
+      gap: 10px !important;
+      flex-wrap: wrap !important;
+      margin-top: 8px !important;
+      font-size: 13px !important;
+      color: #E2E8F0 !important;
+      line-height: 1.5 !important;
+    }
+    .string-h-details span {
+      color: #CBD5E1 !important;
+    }
+    .string-h-details b {
+      color: #8C9B93 !important;
+      font-weight: 700 !important;
+    }
+    .string-h-details + div {
+      color: #A3B3AA !important;
+      font-size: 12.5px !important;
+      margin-top: 6px !important;
+      line-height: 1.5 !important;
+      background: rgba(255, 255, 255, 0.03) !important;
+      padding: 8px 10px !important;
+      border-radius: 8px !important;
+      border-left: 2px solid rgba(193, 255, 0, 0.3) !important;
+    }
+
   </style>
 </head>
 <body>
