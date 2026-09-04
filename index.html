@@ -2396,16 +2396,21 @@
       } else {
         // Running on GitHub Pages
         if (action === 'getTennisData' || action === 'getTennisStringData') {
-          fetch(GAS_API_URL + '?action=' + action)
+          fetch(GAS_API_URL + '?action=' + action + '&t=' + Date.now())
             .then(function(res) { return res.json(); })
             .then(function(data) {
-              try {
-                if (onSuccess) onSuccess(data);
-              } catch(cbErr) {
-                console.error('onSuccess error:', cbErr);
+              if (data && data.error) {
+                if (onFailure) onFailure(new Error(data.error));
+                else console.error('API 조회 오류:', data.error);
+              } else {
+                try {
+                  if (onSuccess) onSuccess(data);
+                } catch(cbErr) {
+                  console.error('onSuccess error:', cbErr);
+                }
               }
             })
-            .catch(function(err) { if (onFailure) onFailure(err); else alert('API 조회 오류: ' + (err.message || err)); });
+            .catch(function(err) { if (onFailure) onFailure(err); else console.error('네트워크 오류:', err); });
         } else {
           fetch(GAS_API_URL, {
             method: 'POST',
@@ -2451,8 +2456,23 @@
       const strDEl = document.getElementById('strInputDate');
       if (strDEl) strDEl.value = today;
 
-      loadData();
-      loadStringData();
+      // ⚡ 로컬 스토리지 캐시 우선 복원 (0초 즉시 화면 표시, 깜빡임 및 0 표기 방지)
+      try {
+        const cached = localStorage.getItem('tennis_cached_data');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && Array.isArray(parsed.logs) && parsed.logs.length > 0) {
+            allLogs = parsed.logs;
+            monthlyTrendsData = parsed.monthly_trends || [];
+            if (typeof updateStats === 'function') updateStats(parsed.overview);
+            renderLogs();
+            if (typeof renderAllCharts === 'function') renderAllCharts();
+          }
+        }
+      } catch(e) {}
+
+      loadData(true);
+      setTimeout(loadStringData, 350);
       if (typeof initPhotoSwipeListeners === 'function') initPhotoSwipeListeners();
       if (typeof initVideoDropzone === 'function') initVideoDropzone();
     }
@@ -2732,13 +2752,23 @@
     function loadData(silent) {
       if (!silent) showToast('테니스 일지 동기화 중...');
       callGasApi('getTennisData', undefined, function(res) {
-        if (!res) return;
-        allLogs = (res && res.logs) || [];
-        monthlyTrendsData = (res && res.monthly_trends) || [];
-        if (typeof updateStats === 'function') updateStats(res && res.overview);
+        if (!res || !Array.isArray(res.logs)) {
+          if (!silent) showToast('동기화 재시도 필요: 데이터를 온전히 받지 못했습니다.');
+          return;
+        }
+        allLogs = res.logs;
+        monthlyTrendsData = res.monthly_trends || [];
+        if (typeof updateStats === 'function') updateStats(res.overview);
         renderLogs();
         if (typeof renderAllCharts === 'function') renderAllCharts();
         if (!silent) showToast('동기화 완료!');
+        try {
+          localStorage.setItem('tennis_cached_data', JSON.stringify({
+            logs: allLogs,
+            overview: res.overview,
+            monthly_trends: monthlyTrendsData
+          }));
+        } catch(e) {}
       }, function(err) {
         if (!silent) showToast('동기화 오류: ' + (err.message || err));
       });
