@@ -2375,9 +2375,15 @@
       } else {
         // Running on GitHub Pages
         if (action === 'getTennisData' || action === 'getTennisStringData') {
-          fetch(GAS_API_URL + '?action=' + action + '&t=' + Date.now())
+          fetch(GAS_API_URL + '?action=' + action)
             .then(function(res) { return res.json(); })
-            .then(function(data) { if (onSuccess) onSuccess(data); })
+            .then(function(data) {
+              try {
+                if (onSuccess) onSuccess(data);
+              } catch(cbErr) {
+                console.error('onSuccess error:', cbErr);
+              }
+            })
             .catch(function(err) { if (onFailure) onFailure(err); else alert('API 조회 오류: ' + (err.message || err)); });
         } else {
           fetch(GAS_API_URL, {
