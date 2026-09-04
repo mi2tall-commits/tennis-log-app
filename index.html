@@ -2376,7 +2376,13 @@
           .withSuccessHandler(function(res) { if (onSuccess) onSuccess(res); })
           .withFailureHandler(function(err) { if (onFailure) onFailure(err); else alert('오류: ' + (err.message || err)); });
         
-        if (Array.isArray(params)) {
+        if (action === 'addTennisComment' && params && params.rowIndex !== undefined) {
+          runner.addTennisComment(params.rowIndex, params.commentData);
+        } else if (action === 'updateTennisComment' && params && params.rowIndex !== undefined) {
+          runner.updateTennisComment(params.rowIndex, params.commentId, params.newText);
+        } else if (action === 'deleteTennisComment' && params && params.rowIndex !== undefined) {
+          runner.deleteTennisComment(params.rowIndex, params.commentId);
+        } else if (Array.isArray(params)) {
           runner[action].apply(runner, params);
         } else if (params !== undefined) {
           runner[action](params);
@@ -3358,17 +3364,38 @@
       e.preventDefault();
       const aEl = document.getElementById('comment-author-' + rowIndex);
       const tEl = document.getElementById('comment-text-' + rowIndex);
-      const author = aEl.value.trim() || '작성자';
-      const text = tEl.value.trim();
+      const submitBtn = e.target ? e.target.querySelector('button[type="submit"]') : null;
+      const author = aEl ? aEl.value.trim() || '작성자' : '작성자';
+      const text = tEl ? tEl.value.trim() : '';
       if (!text) return;
 
       localStorage.setItem('tennis_author_name', author);
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '...';
+      }
+
       showToast('댓글 등록 중...');
-      callGasApi('addTennisComment', { rowIndex: rowIndex, commentData: { author: author, text: text } }, function() {
+      callGasApi('addTennisComment', { rowIndex: rowIndex, commentData: { author: author, text: text } }, function(res) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '등록';
+        }
+        if (tEl) tEl.value = '';
         showToast('댓글이 등록되었습니다! 💬');
-        loadData();
+        const log = allLogs.find(function(l) { return l.rowIndex === rowIndex; });
+        if (log && res && res.comments) {
+          log.comments = res.comments;
+          renderLogs();
+        } else {
+          loadData();
+        }
       }, function(err) {
-        alert('등록 실패: ' + err.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '등록';
+        }
+        alert('등록 실패: ' + (err.message || err));
       });
     }
 
@@ -3377,9 +3404,15 @@
       const newT = prompt('댓글을 수정하세요:', cur);
       if (!newT || newT.trim() === cur) return;
       showToast('수정 중...');
-      callGasApi('updateTennisComment', { rowIndex: rowIndex, commentId: commentId, newText: newT.trim() }, function() {
-        showToast('수정되었습니다.');
-        loadData();
+      callGasApi('updateTennisComment', { rowIndex: rowIndex, commentId: commentId, newText: newT.trim() }, function(res) {
+        showToast('수정되었습니다. ✏️');
+        const log = allLogs.find(function(l) { return l.rowIndex === rowIndex; });
+        if (log && res && res.comments) {
+          log.comments = res.comments;
+          renderLogs();
+        } else {
+          loadData();
+        }
       }, function(err) {
         alert('수정 실패: ' + (err.message || err));
       });
@@ -3387,9 +3420,16 @@
 
     function deleteComment(rowIndex, commentId) {
       if (!confirm('댓글을 삭제하시겠습니까?')) return;
-      callGasApi('deleteTennisComment', { rowIndex: rowIndex, commentId: commentId }, function() {
-        showToast('삭제되었습니다.');
-        loadData();
+      showToast('삭제 중...');
+      callGasApi('deleteTennisComment', { rowIndex: rowIndex, commentId: commentId }, function(res) {
+        showToast('삭제되었습니다. 🗑️');
+        const log = allLogs.find(function(l) { return l.rowIndex === rowIndex; });
+        if (log && res && res.comments) {
+          log.comments = res.comments;
+          renderLogs();
+        } else {
+          loadData();
+        }
       }, function(err) {
         alert('삭제 실패: ' + (err.message || err));
       });
